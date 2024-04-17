@@ -18,7 +18,6 @@ public class MemberController {
     @GetMapping("/json")
     @ResponseBody
     public Person json() {
-        // TODO: /json 요청 시 {"name": "brown", "age": 20} 데이터를 응답할 수 있도록 설정하세요.
         return new Person("brown", 20);
     }
 }
