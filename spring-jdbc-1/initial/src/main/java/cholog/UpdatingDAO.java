@@ -10,7 +10,8 @@ import java.sql.PreparedStatement;
 
 @Repository
 public class UpdatingDAO {
-    private JdbcTemplate jdbcTemplate;
+
+    private final JdbcTemplate jdbcTemplate;
 
     public UpdatingDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -32,14 +33,18 @@ public class UpdatingDAO {
      * public int update(String sql, @Nullable Object... args)
      */
     public void insert(Customer customer) {
-        //todo: customer를 디비에 저장하기
+        jdbcTemplate.update(
+                "INSERT INTO customers (first_name, last_name) VALUES (?, ?)",
+                customer.getFirstName(), customer.getLastName()
+        );
     }
+
     /**
      * public int update(String sql, @Nullable Object... args)
      */
     public int delete(Long id) {
-        //todo: id에 해당하는 customer를 지우고, 해당 쿼리에 영향받는 row 수반환하기
-        return 0;
+        //todo: id에 해당하는 customer를 지우고, 해당 쿼리에 영향받는 row 수 반환하기
+        return jdbcTemplate.update("DELETE FROM customers WHERE id = ?", id);
     }
 
     /**
@@ -49,9 +54,12 @@ public class UpdatingDAO {
         String sql = "insert into customers (first_name, last_name) values (?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        //todo : keyHolder에 대해 학습하고, Customer를 저장후 저장된 Customer의 id를 반환하기
-
-        Long id = keyHolder.getKey().longValue();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql, new String[]{"id"});
+            preparedStatement.setString(1, customer.getFirstName());
+            preparedStatement.setString(2, customer.getLastName());
+            return preparedStatement;
+        }, keyHolder);
 
         return keyHolder.getKey().longValue();
     }

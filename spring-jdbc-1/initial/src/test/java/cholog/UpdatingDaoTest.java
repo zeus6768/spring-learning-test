@@ -1,17 +1,16 @@
 package cholog;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @JdbcTest
 public class UpdatingDaoTest {
@@ -30,7 +29,7 @@ public class UpdatingDaoTest {
         jdbcTemplate.execute("CREATE TABLE customers(" +
                 "id SERIAL, first_name VARCHAR(255), last_name VARCHAR(255))");
 
-        List<Object[]> splitUpNames = Arrays.asList("John Woo", "Jeff Dean", "Josh Bloch", "Josh Long").stream()
+        List<Object[]> splitUpNames = Stream.of("John Woo", "Jeff Dean", "Josh Bloch", "Josh Long")
                 .map(name -> name.split(" "))
                 .collect(Collectors.toList());
 
@@ -50,7 +49,6 @@ public class UpdatingDaoTest {
     @Test
     void delete() {
         int rowNum = updatingDAO.delete(1L);
-
         assertThat(rowNum).isEqualTo(1);
     }
 
@@ -58,7 +56,6 @@ public class UpdatingDaoTest {
     void keyHolder() {
         Customer customer = new Customer("Leonor", "Watling");
         Long id = updatingDAO.insertWithKeyHolder(customer);
-
         assertThat(id).isNotNull();
     }
 }
