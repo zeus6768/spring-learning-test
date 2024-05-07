@@ -48,7 +48,8 @@ class AuthTest {
                 .param(USERNAME_FIELD, EMAIL)
                 .param(PASSWORD_FIELD, PASSWORD)
                 .when().post("/login/session")
-                .then().log().all().extract().header("Set-Cookie").split(";")[0];
+                .then().log().all()
+                .extract().header("Set-Cookie").split(";")[0];
 
         MemberResponse member = RestAssured
                 .given().log().all()

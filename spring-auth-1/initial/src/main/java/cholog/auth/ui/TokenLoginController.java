@@ -1,6 +1,7 @@
 package cholog.auth.ui;
 
 import cholog.auth.application.AuthService;
+import cholog.auth.dto.AuthInfo;
 import cholog.auth.dto.MemberResponse;
 import cholog.auth.dto.TokenRequest;
 import cholog.auth.dto.TokenResponse;
@@ -10,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -35,9 +37,7 @@ public class TokenLoginController {
      * }
      */
     @PostMapping("/login/token")
-    public ResponseEntity<TokenResponse> tokenLogin() {
-        // TODO: email, password 정보를 가진 TokenRequest 값을 메서드 파라미터로 받아오기 (hint: @RequestBody)
-        TokenRequest tokenRequest = null;
+    public ResponseEntity<TokenResponse> tokenLogin(@RequestBody TokenRequest tokenRequest) {
         TokenResponse tokenResponse = authService.createToken(tokenRequest);
         return ResponseEntity.ok().body(tokenResponse);
     }
@@ -51,8 +51,7 @@ public class TokenLoginController {
      */
     @GetMapping("/members/me/token")
     public ResponseEntity<MemberResponse> findMyInfo(HttpServletRequest request) {
-        // TODO: authorization 헤더의 Bearer 값을 추출 (hint: authorizationExtractor 사용)
-        String token = "";
+        String token = new BearerAuthorizationExtractor().extract(request);
         MemberResponse member = authService.findMemberByToken(token);
         return ResponseEntity.ok().body(member);
     }
