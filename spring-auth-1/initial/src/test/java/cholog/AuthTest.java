@@ -1,9 +1,7 @@
 package cholog;
 
-import cholog.auth.dto.MemberResponse;
-import cholog.auth.dto.TokenRequest;
-import cholog.auth.dto.TokenResponse;
-import io.restassured.RestAssured;
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +9,10 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import cholog.auth.dto.MemberResponse;
+import cholog.auth.dto.TokenRequest;
+import cholog.auth.dto.TokenResponse;
+import io.restassured.RestAssured;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AuthTest {
@@ -26,6 +27,20 @@ class AuthTest {
     @BeforeEach
     void setUp() {
         RestAssured.port = port;
+    }
+
+    @Test
+    void nonPreemptiveBasicLogin() {
+        String EMAIL = "email@email.com";
+        String PASSWORD = "1234";
+        RestAssured
+                .given().log().all()
+                .auth().basic(EMAIL, PASSWORD)
+                .accept(MediaType.APPLICATION_JSON_VALUE)
+                .when().get("/members/me/basic")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value()).extract()
+                .as(MemberResponse.class);
     }
 
     @Test

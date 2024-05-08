@@ -1,15 +1,19 @@
 package cholog.auth.ui;
 
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import cholog.auth.application.AuthService;
 import cholog.auth.application.AuthorizationException;
 import cholog.auth.dto.AuthInfo;
 import cholog.auth.dto.MemberResponse;
 import cholog.auth.infrastructure.AuthorizationExtractor;
 import cholog.auth.infrastructure.BasicAuthorizationExtractor;
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class BasicLoginController {
@@ -29,9 +33,14 @@ public class BasicLoginController {
      * accept: application/json
      */
     @GetMapping("/members/me/basic")
-    public ResponseEntity<MemberResponse> findMyInfo(HttpServletRequest request) {
-        // TODO: authorization 헤더의 Basic 값에 있는 email과 password 추출 (hint: authorizationExtractor 사용)
-        AuthInfo authInfo = new BasicAuthorizationExtractor().extract(request);
+    public ResponseEntity<Object> findMyInfo(HttpServletRequest request, HttpServletResponse response) {
+
+        AuthInfo authInfo = authorizationExtractor.extract(request);
+
+        if (authInfo == null) {
+            response.setHeader("WWW-Authenticate", "Basic realm=\"Users\"");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
+        }
 
         String email = authInfo.getEmail();
         String password = authInfo.getPassword();
