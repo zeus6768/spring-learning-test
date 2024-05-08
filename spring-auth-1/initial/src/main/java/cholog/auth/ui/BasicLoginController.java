@@ -38,7 +38,7 @@ public class BasicLoginController {
         AuthInfo authInfo = authorizationExtractor.extract(request);
 
         if (authInfo == null) {
-            response.setHeader("WWW-Authenticate", "Basic realm=\"Users\"");
+            response.setHeader("WWW-Authenticate", "Basic");
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Unauthorized");
         }
 
