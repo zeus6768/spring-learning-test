@@ -14,8 +14,8 @@ class ConfigPropertiesTest {
 
     @Test
     void scanConfigurationProperties() {
-        assertThat(configProperties.getHostName()).isEqualTo("host@mail.com");
-        assertThat(configProperties.getPort()).isEqualTo(9000);
-        assertThat(configProperties.getFrom()).isEqualTo("mailer@mail.com");
+        assertThat(configProperties.hostName()).isEqualTo("host@mail.com");
+        assertThat(configProperties.port()).isEqualTo(9000);
+        assertThat(configProperties.from()).isEqualTo("mailer@mail.com");
     }
 }
